@@ -1,0 +1,32 @@
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+import matplotlib.pyplot as plt
+
+# Sample user data: age and corresponding income
+age = np.array([25, 30, 35, 40, 45, 50, 55, 60, 65, 70])
+income = np.array([40000, 45000, 55000, 60000, 65000, 70000, 75000, 80000, 85000, 90000])
+
+# Reshape the arrays to fit the required format for sklearn
+age = age.reshape(-1, 1)
+income = income.reshape(-1, 1)
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(age, income, test_size=0.2, random_state=42)
+
+# Create and fit the linear regression model
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = model.predict(X_test)
+
+# Plot the training data and the regression line
+plt.scatter(X_train, y_train, color='blue', label='Training Data')
+plt.scatter(X_test, y_test, color='red', label='Testing Data')
+plt.plot(X_test, y_pred, color='green', label='Regression Line')
+plt.xlabel('Age')
+plt.ylabel('Income')
+plt.title('Simple Linear Regression Model')
+plt.legend()
+plt.show()

@@ -1,0 +1,37 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+
+# Load the Iris dataset
+iris_data = pd.read_csv('iris.csv')  # Replace 'iris.csv' with your dataset filename
+
+# View basic statistical details for each species
+setosa_stats = iris_data[iris_data['Species'] == 'Iris-setosa'].describe()
+versicolor_stats = iris_data[iris_data['Species'] == 'Iris-versicolor'].describe()
+virginica_stats = iris_data[iris_data['Species'] == 'Iris-virginica'].describe()
+
+print("Basic Statistical Details for Iris-setosa:")
+print(setosa_stats)
+print("\nBasic Statistical Details for Iris-versicolor:")
+print(versicolor_stats)
+print("\nBasic Statistical Details for Iris-virginica:")
+print(virginica_stats)
+
+# Prepare data for logistic regression
+X = iris_data[['SepalLengthCm', 'SepalWidthCm', 'PetalLengthCm', 'PetalWidthCm']]
+y = iris_data['Species']
+
+# Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Apply logistic regression
+model = LogisticRegression()
+model.fit(X_train, y_train)
+
+# Predict the species on the testing set
+y_pred = model.predict(X_test)
+
+# Calculate accuracy
+accuracy = accuracy_score(y_test, y_pred)
+print("\nAccuracy of the logistic regression model:", accuracy)

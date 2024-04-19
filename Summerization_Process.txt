@@ -1,0 +1,27 @@
+import re
+import nltk
+from nltk.tokenize import sent_tokenize
+from gensim.summarization import summarize
+
+# Text paragraph
+text = """
+Keep working. Keep striving. Never give up. Fall down seven times, get up eight. 
+Ease is a greater threat to progress than hardship. Ease is a greater threat to 
+progress than hardship. So, keep moving, keep growing, keep learning. See you at work.
+"""
+
+# Preprocess the text to remove special characters and digits
+text = re.sub(r'[^a-zA-Z\s]', '', text)
+
+# Tokenize the text into sentences
+sentences = sent_tokenize(text)
+
+# Join the sentences back into a single string for summarization
+text = ' '.join(sentences)
+
+# Perform extractive summarization
+summary = summarize(text)
+
+# Print the summary
+print("Summary:")
+print(summary)

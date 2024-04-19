@@ -1,0 +1,113 @@
+HTML File (index.html):
+html
+Copy code
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Details</title>
+</head>
+<body>
+    <h1>Select Employee</h1>
+    <select id="employeeSelect">
+        <option value="">Select Employee</option>
+        <!-- Options will be populated dynamically via Ajax -->
+    </select>
+    <div id="employeeDetails">
+        <!-- Selected employee details will be displayed here -->
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            // Ajax request to fetch employees
+            $.ajax({
+                url: 'get_employees.php',
+                type: 'GET',
+                success: function(response) {
+                    $('#employeeSelect').html(response);
+                }
+            });
+
+            // Event listener for select change
+            $('#employeeSelect').change(function(){
+                var eno = $(this).val();
+                if(eno !== '') {
+                    // Ajax request to fetch employee details
+                    $.ajax({
+                        url: 'get_employee_details.php',
+                        type: 'POST',
+                        data: {eno: eno},
+                        success: function(response) {
+                            $('#employeeDetails').html(response);
+                        }
+                    });
+                } else {
+                    $('#employeeDetails').html('');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+PHP File to Retrieve Employees (get_employees.php):
+php
+Copy code
+<?php
+// Database connection
+$conn = new mysqli('localhost', 'username', 'password', 'database_name');
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Fetch employees from database
+$sql = "SELECT eno, ename FROM EMP";
+$result = $conn->query($sql);
+
+// Populate select options
+$options = "<option value=''>Select Employee</option>";
+if ($result->num_rows > 0) {
+    while($row = $result->fetch_assoc()) {
+        $options .= "<option value='".$row['eno']."'>".$row['ename']."</option>";
+    }
+}
+
+echo $options;
+
+$conn->close();
+?>
+PHP File to Retrieve Employee Details (get_employee_details.php):
+php
+Copy code
+<?php
+// Database connection
+$conn = new mysqli('localhost', 'username', 'password', 'database_name');
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+if(isset($_POST['eno'])) {
+    $eno = $_POST['eno'];
+
+    // Fetch employee details from database
+    $sql = "SELECT * FROM EMP WHERE eno = $eno";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        // Display employee details
+        echo "<p>Employee Number: " . $row['eno'] . "</p>";
+        echo "<p>Name: " . $row['ename'] . "</p>";
+        echo "<p>Designation: " . $row['designation'] . "</p>";
+        echo "<p>Salary: " . $row['salary'] . "</p>";
+    } else {
+        echo "Employee not found";
+    }
+}
+
+$conn->close();
+?>

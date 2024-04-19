@@ -1,0 +1,43 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, classification_report
+
+# 1. Generate Sample Data
+data = {
+    'User ID': [1, 2, 3, 4, 5],
+    'Gender': ['Male', 'Female', 'Male', 'Female', 'Male'],
+    'Age': [25, 30, 35, 40, 45],
+    'Estimated Salary': [50000, 60000, 70000, 80000, 90000],
+    'Purchased': [0, 1, 0, 1, 0]  # 0: Not purchased, 1: Purchased
+}
+df = pd.DataFrame(data)
+
+# 2. Preprocess Data (Encoding categorical variables)
+df = pd.get_dummies(df, columns=['Gender'], drop_first=True)
+
+# 3. Split Dataset
+X = df.drop(['User ID', 'Purchased'], axis=1)
+y = df['Purchased']
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# 4. Build and Train the Model
+model = LogisticRegression()
+model.fit(X_train, y_train)
+
+# 5. Evaluate the Model
+y_pred = model.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+report = classification_report(y_test, y_pred)
+print("Accuracy:", accuracy)
+print("Classification Report:\n", report)
+
+# 6. Make Predictions (Example)
+new_data = {
+    'Gender_Male': [1],  # Assuming a male user
+    'Age': [35],
+    'Estimated Salary': [75000]
+}
+new_df = pd.DataFrame(new_data)
+prediction = model.predict(new_df)
+print("Prediction:", prediction)

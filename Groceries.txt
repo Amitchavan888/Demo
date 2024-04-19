@@ -1,0 +1,30 @@
+import pandas as pd
+from mlxtend.frequent_patterns import apriori, association_rules
+
+# 1. Read the dataset and display its information
+groceries_data = pd.read_csv('groceries.csv', header=None)  # Replace 'groceries.csv' with your dataset filename
+
+# Display dataset information
+print("Dataset Information:")
+print(groceries_data.info())
+
+# 2. Preprocess the data (drop null values, etc.)
+groceries_data.dropna(inplace=True)
+
+# 3. Convert categorical values into numeric format
+# One-hot encode the transaction data
+encoded_data = groceries_data.stack().str.get_dummies().sum(level=0)
+
+# 4. Apply the Apriori algorithm
+# Generate frequent itemsets with a minimum support of 0.01 (1%)
+frequent_itemsets = apriori(encoded_data, min_support=0.01, use_colnames=True)
+
+# Generate association rules with a minimum confidence of 0.2
+association_rules_result = association_rules(frequent_itemsets, metric="confidence", min_threshold=0.2)
+
+# Display frequent itemsets and association rules
+print("\nFrequent Itemsets:")
+print(frequent_itemsets)
+
+print("\nAssociation Rules:")
+print(association_rules_result)

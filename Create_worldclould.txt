@@ -1,0 +1,32 @@
+import pandas as pd
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from wordcloud import WordCloud
+import matplotlib.pyplot as plt
+
+# Load the dataset
+df = pd.read_csv("movie_review.csv")
+
+# Tokenize and remove stopwords
+stop_words = set(stopwords.words('english'))
+
+def preprocess_text(text):
+    words = word_tokenize(text)
+    filtered_words = [word.lower() for word in words if word.isalpha() and word.lower() not in stop_words]
+    return " ".join(filtered_words)
+
+# Apply preprocessing to the 'text' column
+df['clean_text'] = df['text'].apply(preprocess_text)
+
+# Join all the cleaned text
+all_text = " ".join(df['clean_text'])
+
+# Generate word cloud
+wordcloud = WordCloud(width=800, height=400, background_color='white').generate(all_text)
+
+# Display the word cloud
+plt.figure(figsize=(10, 5))
+plt.imshow(wordcloud, interpolation='bilinear')
+plt.axis('off')
+plt.title('Word Cloud')
+plt.show()
